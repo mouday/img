@@ -1,0 +1,20 @@
+name: Your Workflow Name
+ 
+on: [push, pull_request]
+ 
+jobs:
+  close_notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close notifications
+        if: ${{ failure() }}
+        run: |
+          echo "Closing all notifications"
+          # 获取GitHub Actions的运行ID
+          RUN_ID=${{ github.run_id }}
+          # 获取GitHub Actions的令牌
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          # 关闭通知
+          curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/notifications/threads/$RUN_ID" \
+            -d '{"subscribed": false}'
